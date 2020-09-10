@@ -2,7 +2,7 @@
 import Axios from 'axios'
 
 const request = Axios.create({
-  baseURL: 'http://123.207.32.32:8000',
+  baseURL: 'http://127.0.0.1:9090',
   timeout: 5000
 })
 
