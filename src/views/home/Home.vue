@@ -4,13 +4,18 @@
       <div slot="center">购物街</div>
     </nav-bar>
 
-    <home-swiper :banner='banner'></home-swiper>
-    <recommend-view :recommend="recommend"></recommend-view>
-    <feature-view></feature-view>
-    <!-- @tabClick 监听组件点击 -->
-    <tab-controller class="tab-controller" :titles='tabTitles' @tabClick='tabClick'></tab-controller>
+    <scroll class="home-content" ref="scroll" :probe-type="3" @scollPos="scollPos" :pull-up-load='true' @scrollPullUp='scrollPullUp'>
 
-    <goods-list :goods="showGoods"></goods-list>
+      <home-swiper :banner='banner'></home-swiper>
+      <recommend-view :recommend="recommend"></recommend-view>
+      <feature-view></feature-view>
+      <!-- @tabClick 监听组件点击 -->
+      <tab-controller class="tab-controller" :titles='tabTitles' @tabClick='tabClick'></tab-controller>
+      <goods-list :goods="showGoods"></goods-list>
+
+    </scroll>
+    <!-- 组件件套加native -->
+    <back-top v-show="isShowBackTop" @click.native="backClick"></back-top>
   </div>
 </template>
 
@@ -18,6 +23,8 @@
 import NavBar from 'components/common/navbar/NavBar';
 import TabController from 'components/content/tabcontroller/TabController';
 import GoodsList from 'components/content/goods/GoodsList';
+import Scroll from 'components/common/scroll/Scroll';
+import BackTop from 'components/content/backtop/BackTop';
 
 import HomeSwiper from './childcomps/HomeSwiper';
 import RecommendView from './childcomps/RecommendView';
@@ -39,6 +46,7 @@ export default {
         sell: { page: 0, list: [] },
       },
       currenttype: 'pop',
+      isShowBackTop: false,
     };
   },
   created() {
@@ -52,6 +60,7 @@ export default {
       return this.goods[this.currenttype].list;
     },
   },
+
   methods: {
     gethomeMultidata() {
       gethomeMultidata().then((res) => {
@@ -62,10 +71,26 @@ export default {
     getHomeGoods(type) {
       const page = this.goods[type].page + 1;
       getHomeGoods(type, page).then((res) => {
-        // console.log(res);
         this.goods[type].page = page;
         this.goods[type].list.push(...res.data.list);
       });
+    },
+
+    backClick() {
+      this.$refs.scroll.backClick(0, 48, 300);
+    },
+    scollPos(pos) {
+      let y = pos.y;
+      if (Math.abs(y) > 500) {
+        this.isShowBackTop = true;
+      } else {
+        this.isShowBackTop = false;
+      }
+    },
+    scrollPullUp() {
+      console.log('111111');
+      this.getHomeGoods(this.currenttype);
+      this.$refs.scroll.finishPullUp();
     },
 
     //事件监听
@@ -94,11 +119,13 @@ export default {
     RecommendView,
     HomeSwiper,
     FeatureView,
+    Scroll,
+    BackTop,
   },
 };
 </script>
 
-<style >
+<style scoped>
 #home {
   padding-top: 44px;
 }
@@ -116,5 +143,16 @@ export default {
   position: sticky;
   top: 44px;
   background-color: #fff;
+}
+.home-content {
+  top: 44px;
+  bottom: 49px;
+  left: 0;
+  right: 0;
+  overflow: hidden;
+  position: absolute;
+  /* 
+  height: 500px;
+  overflow: hidden; */
 }
 </style>
