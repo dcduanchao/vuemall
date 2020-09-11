@@ -31,13 +31,12 @@ export default {
   },
   mounted() {
     //创建对象
-    setTimeout(() => {
-      this.$nextTick(() => {
-        this.initScroll();
-        this.scrollPosReturn();
-        this.scrollPullUpLoad();
-      });
-    }, 1000);
+    this.$nextTick(() => {
+      this.initScroll();
+      this.scrollPosReturn();
+      this.scrollPullUpLoad();
+      // this.scrollRefresh();
+    });
   },
   methods: {
     initScroll() {
@@ -62,11 +61,13 @@ export default {
       });
     },
     finishPullUp() {
-      this.scroll.finishPullUp();
-      this.scrollRefresh();
+      this.scroll && this.scroll.finishPullUp();
+      // this.scrollRefresh();
     },
     scrollRefresh() {
-      this.scroll.refresh();
+      this.$nextTick(() => {
+        this.scroll && this.scroll.refresh();
+      });
     },
   },
 };

@@ -55,6 +55,11 @@ export default {
     this.getHomeGoods('news');
     this.getHomeGoods('sell');
   },
+  mounted() {
+    this.$bus.$on('itemLoadImage', () => {
+      this.itemLoadImage();
+    });
+  },
   computed: {
     showGoods() {
       return this.goods[this.currenttype].list;
@@ -88,9 +93,12 @@ export default {
       }
     },
     scrollPullUp() {
-      console.log('111111');
       this.getHomeGoods(this.currenttype);
       this.$refs.scroll.finishPullUp();
+    },
+    itemLoadImage() {
+      // console.log(this.$refs.scroll);
+      this.$refs.scroll && this.$refs.scroll.scrollRefresh();
     },
 
     //事件监听
