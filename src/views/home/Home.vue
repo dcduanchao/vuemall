@@ -3,15 +3,18 @@
     <nav-bar class="nav-home">
       <div slot="center">购物街</div>
     </nav-bar>
-
+    <tab-controller class="tab-controller" ref="tabController1" :titles='tabTitles' @tabClick='tabClick' v-show="isTabFixed">
+    </tab-controller>
     <scroll class="home-content" ref="scroll" :probe-type="3" @scollPos="scollPos" :pull-up-load='true' @scrollPullUp='scrollPullUp'>
 
-      <home-swiper :banner='banner'></home-swiper>
+      <home-swiper :banner='banner' @bannerImageLoad='bannerImageLoad'></home-swiper>
       <recommend-view :recommend="recommend"></recommend-view>
       <feature-view></feature-view>
       <!-- @tabClick 监听组件点击 -->
-      <tab-controller class="tab-controller" :titles='tabTitles' @tabClick='tabClick'></tab-controller>
-      <goods-list :goods="showGoods"></goods-list>
+      <tab-controller :titles='tabTitles' @tabClick='tabClick' ref="tabController">
+      </tab-controller>
+      <goods-list :goods=" showGoods">
+      </goods-list>
 
     </scroll>
     <!-- 组件件套加native -->
@@ -32,6 +35,8 @@ import FeatureView from './childcomps/FeatureView';
 
 import { gethomeMultidata, getHomeGoods } from 'network/home';
 
+import { debounce } from 'common/utils';
+
 export default {
   name: 'Home',
 
@@ -47,6 +52,9 @@ export default {
       },
       currenttype: 'pop',
       isShowBackTop: false,
+      tabOffsetTop: 0,
+      isTabFixed: false,
+      leaveY: 0,
     };
   },
   created() {
@@ -56,8 +64,11 @@ export default {
     this.getHomeGoods('sell');
   },
   mounted() {
+    //防抖动
+    const refresh = debounce(this.$refs.scroll.scrollRefresh, 500);
     this.$bus.$on('itemLoadImage', () => {
-      this.itemLoadImage();
+      refresh();
+      // this.itemLoadImage();
     });
   },
   computed: {
@@ -65,8 +76,26 @@ export default {
       return this.goods[this.currenttype].list;
     },
   },
+  destroyed() {
+    console.log('--------');
+  },
+  activated() {
+    this.$refs.scroll.backClick(0, this.leaveY, 0);
+    this.$refs.scroll && this.$refs.scroll.scrollRefresh();
+  },
+  deactivated() {
+    this.leaveY = this.$refs.scroll.getScrollY();
+  },
 
   methods: {
+    bannerImageLoad() {
+      this.tabOffsetTop = this.$refs.tabController.$el.offsetTop;
+    },
+
+    itemLoadImage() {
+      this.$refs.scroll && this.$refs.scroll.scrollRefresh();
+    },
+
     gethomeMultidata() {
       gethomeMultidata().then((res) => {
         this.banner = res.data.banner.list;
@@ -91,14 +120,11 @@ export default {
       } else {
         this.isShowBackTop = false;
       }
+      this.isTabFixed = -pos.y > this.tabOffsetTop;
     },
     scrollPullUp() {
       this.getHomeGoods(this.currenttype);
       this.$refs.scroll.finishPullUp();
-    },
-    itemLoadImage() {
-      // console.log(this.$refs.scroll);
-      this.$refs.scroll && this.$refs.scroll.scrollRefresh();
     },
 
     //事件监听
@@ -118,6 +144,9 @@ export default {
         default:
           break;
       }
+
+      this.$refs.tabController1.currntIndex = index;
+      this.$refs.tabController.currntIndex = index;
     },
   },
   components: {
@@ -147,10 +176,11 @@ export default {
   top: 0;
   z-index: 9;
 }
+
 .tab-controller {
-  position: sticky;
-  top: 44px;
-  background-color: #fff;
+  position: relative;
+  z-index: 9;
+  /* background-color: #fff; */
 }
 .home-content {
   top: 44px;

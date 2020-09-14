@@ -47,7 +47,7 @@ export default {
       });
     },
     backClick(x, y, time = 300) {
-      this.scroll.scrollTo(x, y, time);
+      this.scroll && this.scroll.scrollTo(x, y, time);
     },
     scrollPosReturn() {
       this.scroll.on('scroll', (pos) => {
@@ -65,9 +65,11 @@ export default {
       // this.scrollRefresh();
     },
     scrollRefresh() {
-      this.$nextTick(() => {
-        this.scroll && this.scroll.refresh();
-      });
+      this.scroll && this.scroll.refresh();
+    },
+
+    getScrollY() {
+      return this.scroll ? this.scroll.y : 0;
     },
   },
 };
