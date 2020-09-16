@@ -7,7 +7,7 @@ const Home = () => import('views/home/Home');
 const Cart = () => import('views/cart/Cart')
 const Profile = () => import('views/profile/Profile')
 const Category = () => import('views/category/Category')
-
+const GoodsDetail = () => import('views/detail/goods/GoodsDetail');
 //重复点击报错
 const originalPush = Router.prototype.push
 Router.prototype.push = function push(location) {
@@ -50,6 +50,14 @@ const routes = [
     component: Category,
     meta: {
       title: '分类'
+    }
+  },
+  {
+    path: '/goods/detail/:id',
+    name: 'GoodsDetail',
+    component: GoodsDetail,
+    meta: {
+      title: '商品详情'
     }
   }
 ];

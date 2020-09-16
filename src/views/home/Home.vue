@@ -36,6 +36,7 @@ import FeatureView from './childcomps/FeatureView';
 import { gethomeMultidata, getHomeGoods } from 'network/home';
 
 import { debounce } from 'common/utils';
+import { itemListerMixin } from 'common/mixin';
 
 export default {
   name: 'Home',
@@ -57,6 +58,7 @@ export default {
       leaveY: 0,
     };
   },
+  mixins: [itemListerMixin],
   created() {
     this.gethomeMultidata();
     this.getHomeGoods('pop');
@@ -64,12 +66,12 @@ export default {
     this.getHomeGoods('sell');
   },
   mounted() {
-    //防抖动
-    const refresh = debounce(this.$refs.scroll.scrollRefresh, 500);
-    this.$bus.$on('itemLoadImage', () => {
-      refresh();
-      // this.itemLoadImage();
-    });
+    // //防抖动
+    // const refresh = debounce(this.$refs.scroll.scrollRefresh, 500);
+    // this.$bus.$on('itemLoadImage', () => {
+    //   refresh();
+    //   // this.itemLoadImage();
+    // });
   },
   computed: {
     showGoods() {
@@ -85,6 +87,7 @@ export default {
   },
   deactivated() {
     this.leaveY = this.$refs.scroll.getScrollY();
+    this.$bus.$off('itemLoadImage', this.itemImgListener);
   },
 
   methods: {

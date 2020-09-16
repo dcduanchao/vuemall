@@ -31,12 +31,15 @@ export default {
   },
   mounted() {
     //创建对象
-    this.$nextTick(() => {
-      this.initScroll();
-      this.scrollPosReturn();
-      this.scrollPullUpLoad();
-      // this.scrollRefresh();
-    });
+
+    setTimeout(() => {
+      this.$nextTick(() => {
+        this.initScroll();
+        this.scrollPosReturn();
+        this.scrollPullUpLoad();
+        // this.scrollRefresh();
+      });
+    }, 500);
   },
   methods: {
     initScroll() {
@@ -49,6 +52,9 @@ export default {
     backClick(x, y, time = 300) {
       this.scroll && this.scroll.scrollTo(x, y, time);
     },
+    scrollTo(x, y, time = 300) {
+      this.scroll && this.scroll.scrollTo(x, y, time);
+    },
     scrollPosReturn() {
       this.scroll.on('scroll', (pos) => {
         this.$emit('scollPos', pos);
@@ -56,13 +62,14 @@ export default {
     },
 
     scrollPullUpLoad() {
-      this.scroll.on('pullingUp', () => {
-        this.$emit('scrollPullUp');
-      });
+      if (this.pullUpLoad) {
+        this.scroll.on('pullingUp', () => {
+          this.$emit('scrollPullUp');
+        });
+      }
     },
     finishPullUp() {
       this.scroll && this.scroll.finishPullUp();
-      // this.scrollRefresh();
     },
     scrollRefresh() {
       this.scroll && this.scroll.refresh();
