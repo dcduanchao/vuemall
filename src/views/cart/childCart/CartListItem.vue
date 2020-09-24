@@ -1,15 +1,15 @@
 <template>
-  <div>
+  <div class="cart">
     <div class="cart-list-main flex" v-for="item in cartList" :key="item.id">
       <div class="cart-list-left flex">
-        <input type="checkbox" class="check" v-model="item.checked">
+        <input type="checkbox" class="check" v-model="item.check" @click="goodClick(item)">
         <img :src="item.image" alt="" class="goods-img">
       </div>
 
       <div class="cart-list-right">
         <div class="goods-name one-txt-cut">{{item.title}}</div>
         <div class="goods-info flex">
-          <span class="price">￥{{item.price}}</span><span>x{{item.count}}</span>
+          <span class="price">￥{{item.price|getPrice}}</span><span>x{{item.count}}</span>
         </div>
       </div>
 
@@ -21,19 +21,34 @@
 <script>
 export default {
   name: 'CartListItem',
+  data() {
+    return {};
+  },
 
-  props: {
-    cartList: {
-      type: Array,
-      default() {
-        return [];
-      },
+  computed: {
+    cartList() {
+      return this.$store.state.cartList;
+    },
+  },
+
+  filters: {
+    getPrice(value) {
+      return value.toFixed(2);
+    },
+  },
+
+  methods: {
+    goodClick(item) {
+      this.$store.commit('updateSignCheck', item);
     },
   },
 };
 </script>
 
 <style lang="less" scoped="scoped">
+.cart {
+  // bottom: 300px;
+}
 .cart-list-main {
   padding: 10px;
   border-bottom: 1px solid #ececec;

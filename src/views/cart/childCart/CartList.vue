@@ -1,7 +1,6 @@
 <template>
   <div class="cart-list-wrap">
-    <cart-list-item :cart-list="cartList"></cart-list-item>
-   
+    <cart-list-item></cart-list-item>
 
   </div>
 </template>
@@ -10,14 +9,7 @@
 import CartListItem from './CartListItem';
 export default {
   name: 'CartList',
-  props: {
-    cartList: {
-      type: Array,
-      default() {
-        return [];
-      },
-    },
-  },
+
   components: {
     CartListItem,
   },
@@ -27,8 +19,6 @@ export default {
 <style  scoped>
 .cart-list-wrap {
   position: relative;
-  top: 44px;
-  bottom: 89px;
   background-color: #fff;
 }
 </style>

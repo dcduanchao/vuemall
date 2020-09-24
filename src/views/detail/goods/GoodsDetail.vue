@@ -13,6 +13,7 @@
     </scroll>
     <detail-botton @addCart='addCart'></detail-botton>
     <back-top v-show="isShowBackTop" @click.native="backClick"></back-top>
+    <!-- <toast message='hahahhaha' :is-show="isShow"></toast> -->
   </div>
 </template>
 
@@ -30,6 +31,7 @@ import GoodsList from 'components/content/goods/GoodsList';
 import BackTop from 'components/content/backtop/BackTop';
 
 import Scroll from 'components/common/scroll/Scroll';
+import Toast from 'components/common/toast/Toast';
 
 import { itemListerMixin } from 'common/mixin';
 import { debounce } from 'common/utils';
@@ -60,6 +62,7 @@ export default {
       themeTopY: [],
       getThemeTopY: null,
       isShowBackTop: false,
+      isShow: false,
     };
   },
   mixins: [itemListerMixin],
@@ -94,6 +97,7 @@ export default {
     GoodsList,
     DetailBotton,
     BackTop,
+    Toast,
   },
 
   destroyed() {
@@ -144,7 +148,11 @@ export default {
     addCart() {
       console.log('购物车');
       addGoodsCart(this.id).then(() => {
-        confirm('成功');
+        // this.isShow = true;
+        // setTimeout(() => {
+        //   this.isShow = false;
+        // }, 1500);
+        this.$toast.show('111111111');
       });
     },
 

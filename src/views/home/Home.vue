@@ -106,9 +106,9 @@ export default {
       });
     },
     getHomeGoods(type) {
-      const page = this.goods[type].page + 1;
+      let page = this.goods[type].page + 1;
       getHomeGoods(type, page).then((res) => {
-        this.goods[type].page = page;
+        this.goods[type].page = this.goods[type].page + 1;
         this.goods[type].list.push(...res.data.list);
       });
     },
